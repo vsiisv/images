@@ -18,7 +18,7 @@ class FavoriteViewController: UIViewController {
 	
 	lazy var collectionView: UICollectionView = {
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-		collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+		collectionView.register(FavoriteCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 		return collectionView
 	}()
 	
@@ -47,9 +47,7 @@ extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewData
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-		cell.backgroundColor = .red
-		cell.layer.cornerRadius = 10
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FavoriteCell
 		return cell
 	}
 	
