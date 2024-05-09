@@ -33,7 +33,9 @@ private extension ImagesCell {
 	
 	func setupImage() {
 		imageView.image = UIImage(systemName: "photo")
-		imageView.contentMode = .scaleAspectFit
+		imageView.clipsToBounds = true
+		imageView.layer.cornerRadius = 10
+		imageView.contentMode = .scaleToFill
 	}
 	
 	func addSubviews() {

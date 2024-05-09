@@ -9,13 +9,18 @@ import UIKit
 
 class DetailViewController: UIViewController {
 	
-	var imageView = UIImageView()
-	var authorNameLabel = UILabel()
-	var dateOfCreationLabel = UILabel()
-	var locationLabel = UILabel()
-	var downloadsLabel = UILabel()
+	var id: String?
+	var imageURL: String?
+
+	private var dataManager = DataManager()
+
+	private var imageView = UIImageView()
+	private var authorNameLabel = UILabel()
+	private var dateOfCreationLabel = UILabel()
+	private var locationLabel = UILabel()
+	private var downloadsLabel = UILabel()
 	
-	lazy var verticalStackView: UIStackView =  {
+	private lazy var verticalStackView: UIStackView =  {
 		let stackView = UIStackView()
 		stackView.axis = .vertical
 		stackView.alignment = .fill
@@ -27,15 +32,17 @@ class DetailViewController: UIViewController {
 	}()
 	
 	private lazy var addFavoriteButton: UIButton = {
-		let button = UIButton()
+		let button = UIButton(type: .system)
 		let image = UIImage(systemName: "heart")
 		button.setBackgroundImage(image, for: .normal)
 		button.tintColor = .red
+		button.addTarget(self, action: #selector(addToFavorite), for: .touchUpInside)
 		return button
 	}()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+		setupView()
 		addSubviews()
 		setupConstraints()
 		setupImage()
@@ -43,13 +50,74 @@ class DetailViewController: UIViewController {
 		setupCreationLabel()
 		setupLocationLabel()
 		setupDownloadsLabel()
+		
+		getImageData()
+		loadImage(with: imageURL)
     }
+	
+	// Get Data
+	private func getImageData() {
+		guard let id else { return }
+		NetworkManager.shared.getImage(with: id) { image in
+			DispatchQueue.main.async {
+				self.updateUI(with: image)
+			}
+		}
+	}
+	
+	private func loadImage(with url: String?) {
+		guard let url else { return }
+		NetworkManager.shared.loadImage(from: url) { image in
+			DispatchQueue.main.async {
+				self.imageView.image = image				
+			}
+		}
+	}
+	
+	// Setup data to UI
+	private func updateUI(with data: Image) {
+		self.authorNameLabel.text = data.user?.name
+		self.locationLabel.text = "Location: \(data.location?.country ?? "none county"), \(data.location?.city ?? "none city")"
+		self.dateOfCreationLabel.text = "Creation date: \(data.createdDate)"
+		
+		if let downloads = data.downloads {
+			self.downloadsLabel.text = "Count of Downloads: \(String(downloads))"
+		}
+		
+		guard let id else { return }
+		
+		if dataManager.obtainImages().contains(where: { $0.id == id }) {
+			addFavoriteButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal)
+		}
+	}
+	
+	// Button Action
+	@objc private func addToFavorite() {
+		
+		guard let id, let name = authorNameLabel.text, let url = imageURL else { return }
+		let imageUD = ImageUD(id: id, authorName: name, url: url)
+
+		if !dataManager.obtainImages().contains(where: { $0.id == id }) {
+			dataManager.saveImage(imageUD)
+			addFavoriteButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal)
+		} else {
+			dataManager.deleteImage(imageUD)
+			addFavoriteButton.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
+		}
+	}
 }
 
 // MARK: - Style and Constraints
 private extension DetailViewController {
+	func setupView() {
+		view.backgroundColor = .white
+	}
+	
 	func setupImage() {
-		imageView.backgroundColor = .blue
+		imageView.image = UIImage(systemName: "photo")
+		imageView.contentMode = .scaleAspectFill
+		imageView.clipsToBounds = true
+		imageView.layer.cornerRadius = 10
 	}
 	
 	func setupNameLabel() {
@@ -76,7 +144,7 @@ private extension DetailViewController {
 	// Add Subviews
 	func addSubviews() {
 		view.addSubview(imageView)
-		imageView.addSubview(addFavoriteButton)
+		view.addSubview(addFavoriteButton)
 		view.addSubview(verticalStackView)
 		verticalStackView.addArrangedSubview(authorNameLabel)
 		verticalStackView.addArrangedSubview(locationLabel)
@@ -106,7 +174,7 @@ private extension DetailViewController {
 			addFavoriteButton.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: -20),
 			addFavoriteButton.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -20),
 			addFavoriteButton.heightAnchor.constraint(equalToConstant: 50),
-			addFavoriteButton.widthAnchor.constraint(equalToConstant: 50),
+			addFavoriteButton.widthAnchor.constraint(equalToConstant: 60),
 		])
 	}
 }

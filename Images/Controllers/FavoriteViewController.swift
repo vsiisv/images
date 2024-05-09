@@ -9,6 +9,9 @@ import UIKit
 
 class FavoriteViewController: UIViewController {
 	
+	private var favoriteImages: [ImageUD] = []
+	private let networkManager = NetworkManager()
+	
 	private let reuseIdentifier = "Cell"
 	private let layout: UICollectionViewFlowLayout = {
 		let layout = UICollectionViewFlowLayout()
@@ -28,10 +31,23 @@ class FavoriteViewController: UIViewController {
 		addSubViews()
 		setupConstraints()
 		setupDelegateAndDatasource()
+		
+		
+	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		getFavoriteImages()
+//		collectionView.reloadData()
 	}
 	
 	override func viewWillLayoutSubviews() {
-		collectionView.reloadData()
+//		collectionView.reloadData()
+	}
+	
+	private func getFavoriteImages() {
+		let dataManager = DataManager()
+		favoriteImages = dataManager.obtainImages()
 	}
 }
 
@@ -43,11 +59,17 @@ extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewData
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return 30
+		return favoriteImages.count
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FavoriteCell
+		cell.authorNameLabel.text = favoriteImages[indexPath.row].authorName
+		
+		networkManager.loadImage(from: favoriteImages[indexPath.row].url) { image in
+			cell.imageView.image = image
+		}
+		
 		return cell
 	}
 	

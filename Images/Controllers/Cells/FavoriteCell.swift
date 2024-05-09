@@ -38,7 +38,7 @@ private extension FavoriteCell {
 		imageView.backgroundColor = .blue
 		imageView.clipsToBounds = true
 		imageView.layer.cornerRadius = 5
-		imageView.contentMode = .scaleAspectFit
+		imageView.contentMode = .scaleAspectFill
 		imageView.image = UIImage(systemName: "photo")
 	}
 	
