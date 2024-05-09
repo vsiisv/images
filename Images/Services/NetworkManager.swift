@@ -12,10 +12,10 @@ class NetworkManager {
 	
 	static let shared = NetworkManager()
 	
-	private let apiKey = "aWbA1rwHDmuNPOy-_vocTT8IeILqb-zhtDwy1n3lPN4"
+	private let apiKey = ""
 	
 	func getImages(completion: @escaping ([Image]) -> ()) {
-		let api = "https://api.unsplash.com/photos/?client_id=\(apiKey)"
+		let api = "https://api.unsplash.com/photos?per_page=30&client_id=\(apiKey)"
 		
 		guard let apiURL = URL(string: api) else { print("No data or response"); return }
 		
@@ -59,7 +59,7 @@ class NetworkManager {
 	// get current Image data
 	func getImage(with imageId: String, completion: @escaping (Image) -> ()) {
 		let api = "https://api.unsplash.com/photos/\(imageId)?client_id=\(apiKey)"
-		
+		print(api)
 		guard let apiURL = URL(string: api) else { print("No data or response"); return }
 		
 		let session = URLSession(configuration: .default)
