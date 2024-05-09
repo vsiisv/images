@@ -45,7 +45,6 @@ private extension FavoriteCell {
 	func setupNameLabel() {
 		authorNameLabel.text = "Author's name"
 		authorNameLabel.numberOfLines = 0
-		authorNameLabel.font = UIFont(name: "Zapfino", size: 10)
 	}
 	
 	func addSubviews() {

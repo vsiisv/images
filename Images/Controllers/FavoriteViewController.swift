@@ -31,14 +31,12 @@ class FavoriteViewController: UIViewController {
 		addSubViews()
 		setupConstraints()
 		setupDelegateAndDatasource()
-		
-		
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		getFavoriteImages()
-//		collectionView.reloadData()
+		collectionView.reloadData()
 	}
 	
 	override func viewWillLayoutSubviews() {
@@ -66,11 +64,17 @@ extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewData
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FavoriteCell
 		cell.authorNameLabel.text = favoriteImages[indexPath.row].authorName
 		
-		networkManager.loadImage(from: favoriteImages[indexPath.row].url) { image in
-			cell.imageView.image = image
-		}
+		let url = favoriteImages[indexPath.row].url
+		networkManager.loadImageKF(from: url, image: cell.imageView)
 		
 		return cell
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		let vc = DetailViewController()
+		vc.id = favoriteImages[indexPath.row].id
+		vc.imageURL = favoriteImages[indexPath.row].url
+		navigationController?.pushViewController(vc, animated: true)
 	}
 	
 }

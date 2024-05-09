@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class NetworkManager {
 	
@@ -28,7 +29,7 @@ class NetworkManager {
 	}
 	
 	// Load image(picture)
-	func loadImage(from urlString: String, completion: @escaping (UIImage?) -> Void) {
+/*	func loadImage(from urlString: String, completion: @escaping (UIImage?) -> Void) {
 		guard let url = URL(string: urlString) else {
 			completion(nil)
 			return
@@ -48,11 +49,16 @@ class NetworkManager {
 		}
 		task.resume()
 	}
+*/
+	func loadImageKF(from url: String, image: UIImageView) {
+		guard let url = URL(string: url) else { return }
+		image.kf.setImage(with: url)
+	}
 	
 	
 	// get current Image data
 	func getImage(with imageId: String, completion: @escaping (Image) -> ()) {
-		let api = "https://api.unsplash.com/photos/\(imageId)?client_id=\(apiKey))"
+		let api = "https://api.unsplash.com/photos/\(imageId)?client_id=\(apiKey)"
 		
 		guard let apiURL = URL(string: api) else { print("No data or response"); return }
 		

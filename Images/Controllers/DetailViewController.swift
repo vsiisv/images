@@ -67,11 +67,7 @@ class DetailViewController: UIViewController {
 	
 	private func loadImage(with url: String?) {
 		guard let url else { return }
-		NetworkManager.shared.loadImage(from: url) { image in
-			DispatchQueue.main.async {
-				self.imageView.image = image				
-			}
-		}
+		NetworkManager.shared.loadImageKF(from: url, image: imageView)
 	}
 	
 	// Setup data to UI
@@ -123,7 +119,6 @@ private extension DetailViewController {
 	func setupNameLabel() {
 		authorNameLabel.text = "Author's name"
 		authorNameLabel.textAlignment = .center
-		authorNameLabel.font = UIFont(name: "Zapfino", size: 15)
 	}
 	
 	func setupCreationLabel() {

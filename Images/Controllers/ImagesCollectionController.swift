@@ -58,12 +58,7 @@ extension ImagesCollectionController: UICollectionViewDelegate, UICollectionView
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImagesCell
 		let imageUrl = images[indexPath.item].urls.small
-		
-		NetworkManager.shared.loadImage(from: imageUrl) { image in
-			DispatchQueue.main.async {
-				cell.imageView.image = image
-			}
-		}
+		NetworkManager.shared.loadImageKF(from: imageUrl, image: cell.imageView)
 		return cell
 	}
 	
